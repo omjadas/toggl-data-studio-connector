@@ -1,0 +1,27 @@
+{
+  "name": "toggl-datastudio-connector",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omjadas/toggl-datastudio-connector.git"
+  },
+  "author": "Omja Das",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/omjadas/toggl-datastudio-connector/issues"
+  },
+  "homepage": "https://github.com/omjadas/toggl-datastudio-connector#readme",
+  "devDependencies": {
+    "@google/clasp": "^2.3.0",
+    "@google/dscc-scripts": "^1.0.15",
+    "@types/google-apps-script": "^1.0.11",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "eslint": "^6.8.0",
+    "typescript": "^3.8.3"
+  }
+}
