@@ -1,9 +1,11 @@
-import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Workspace, Tag, Report } from "./global";
+import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Workspace, Tag, Report as Entry } from "./global";
 import { AUTH_PROPERTY_PATH } from "./auth";
 
 const cc = DataStudioApp.createCommunityConnector();
 
 const userProperties = PropertiesService.getUserProperties();
+
+const USER_AGENT = "TOGGL_DATA_STUDIO_CONNECTOR";
 
 function fetchWorkspaces(): Workspace[] {
   const key = userProperties.getProperty(AUTH_PROPERTY_PATH);
@@ -55,8 +57,31 @@ function fetchTags(workspace: string): Tag[] {
   return tags;
 }
 
-function fetchEntries(workspace: string): Report[] {
-  return [];
+function fetchEntries(workspace: string, start: string, end: string): Entry[] {
+  const key = userProperties.getProperty(AUTH_PROPERTY_PATH);
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  if (key === null) {
+    cc.newUserError()
+      .throwException();
+
+    throw new Error();
+  }
+
+  const entries: Entry[] = JSON.parse(UrlFetchApp.fetch(
+    `https://toggl.com/reports/api/v2/details?user_agent=${USER_AGENT}&workspace_id=${workspace}&since=${startDate.toISOString().slice(0, 10)}&until=${endDate.toISOString().slice(0, 10)}`,
+    {
+      method: "get",
+      muteHttpExceptions: true,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
+      },
+    }
+  ).getContentText());
+
+  return entries;
 }
 
 // https://developers.google.com/datastudio/connector/reference#getconfig
@@ -211,11 +236,17 @@ export function getSchema(request: GetSchemaRequest): GetSchemaResponse {
     .build();
 }
 
+function responseToRows(entries: Entry[]): GetDataRows {
+  return [];
+}
+
 // https://developers.google.com/datastudio/connector/reference#getdata
 export function getData(request: GetDataRequest): GetDataResponse {
   const workspace = request.configParams?.workspace;
+  const startDate = request.dateRange?.startDate;
+  const endDate = request.dateRange?.endDate;
 
-  if (workspace === undefined) {
+  if (workspace === undefined || startDate === undefined || endDate === undefined) {
     cc.newUserError()
       .throwException();
 
@@ -225,12 +256,11 @@ export function getData(request: GetDataRequest): GetDataResponse {
   const requestedFieldIds = request.fields.map(field => field.name);
   const requestedFields = getFields(workspace).forIds(requestedFieldIds);
 
-  const entries = fetchEntries(workspace);
-  const rows = [[]];
+  const entries = fetchEntries(workspace, startDate, endDate);
+  const rows = responseToRows(entries);
 
-  return cc
-    .newGetDataResponse()
-    .setFields(requestedFields)
-    .addAllRows(rows)
-    .build();
+  return {
+    schema: requestedFields.build(),
+    rows: rows,
+  };
 }
