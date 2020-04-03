@@ -1,9 +1,32 @@
 import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Workspace } from "./global";
+import { AUTH_PROPERTY_PATH } from "./auth";
 
 const cc = DataStudioApp.createCommunityConnector();
 
+const scriptProperties = PropertiesService.getScriptProperties();
+const userProperties = PropertiesService.getUserProperties();
+
 function fetchWorkspaces(): Workspace[] {
-  return [];
+  const key = userProperties.getProperty(AUTH_PROPERTY_PATH);
+
+  if (key === null) {
+    cc.newUserError()
+      .throwException();
+
+    throw new Error();
+  }
+
+  const workspaces: Workspace[] = JSON.parse(UrlFetchApp.fetch(
+    "https://www.toggl.com/api/v8/workspaces",
+    {
+      muteHttpExceptions: true,
+      headers: {
+        "Authorization": `Basic ${Utilities.base64Encode(key)}`,
+      },
+    }
+  ).getContentText());
+
+  return workspaces;
 }
 
 // https://developers.google.com/datastudio/connector/reference#getconfig
