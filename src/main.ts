@@ -1,5 +1,5 @@
 import { AUTH_PROPERTY_PATH } from "./auth";
-import { Entry, GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Tag, Workspace, DetailsResponse } from "./global";
+import { DetailsResponse, Entry, GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Tag, Workspace, GetDataRowValue } from "./global";
 
 const cc = DataStudioApp.createCommunityConnector();
 
@@ -21,7 +21,7 @@ function fetchWorkspaces(): Workspace[] {
     "https://www.toggl.com/api/v8/workspaces",
     {
       method: "get",
-      muteHttpExceptions: true,
+      muteHttpExceptions: false,
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
@@ -46,7 +46,7 @@ function fetchTags(workspace: string): Tag[] {
     `https://www.toggl.com/api/v8/workspaces/${workspace}/tags`,
     {
       method: "get",
-      muteHttpExceptions: true,
+      muteHttpExceptions: false,
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
@@ -68,7 +68,7 @@ function fetchPage(
     `https://toggl.com/reports/api/v2/details?user_agent=${USER_AGENT}&workspace_id=${workspace}&since=${start}&until=${end}&page=${page}`,
     {
       method: "get",
-      muteHttpExceptions: true,
+      muteHttpExceptions: false,
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
@@ -143,7 +143,6 @@ export function getConfig(
 function getFields(workspace: string): GoogleAppsScript.Data_Studio.Fields {
   const fields = cc.getFields();
   const types = cc.FieldType;
-  const aggregations = cc.AggregationType;
 
   // Dimensions
 
@@ -231,7 +230,7 @@ function getFields(workspace: string): GoogleAppsScript.Data_Studio.Fields {
 
   tags.forEach(tag => {
     fields.newDimension()
-      .setId(`tag:${tag.name}`)
+      .setId(`tag_${tag.name}`)
       .setName(`Tag: ${tag.name}`)
       .setType(types.BOOLEAN);
   });
@@ -261,13 +260,38 @@ export function getSchema(request: GetSchemaRequest): GetSchemaResponse {
     .build();
 }
 
-function responseToRows(entries: Entry[]): GetDataRows {
-  return [];
+function isoStringToSimple(time: string): string {
+  return time.slice(0, 19).replace(/[-:T]+/g, "");
+}
+
+function responseToRows(requestedFieldIds: string[], entries: Entry[]): GetDataRows {
+  return entries.map(entry => {
+    const row: GetDataRowValue[] = [];
+
+    for (const field of requestedFieldIds) {
+      let val: any;
+
+      if (field.slice(0, 4) === "tag_") {
+        val = entry.tags.includes(field.slice(4));
+      } else if (field === "dur") {
+        val = (entry[field] / 1000).toString();
+      } else {
+        val = entry[field];
+      }
+
+      if (field === "start" || field === "end" || field === "updated") {
+        val = isoStringToSimple(val);
+      }
+
+      row.push(val);
+    }
+    return { values: row };
+  });
 }
 
 // https://developers.google.com/datastudio/connector/reference#getdata
 export function getData(request: GetDataRequest): GetDataResponse {
-  const workspace = request.configParams?.workspace;
+  const workspace = request.configParams?.workspace_id;
   const startDate = request.dateRange?.startDate;
   const endDate = request.dateRange?.endDate;
 
@@ -276,6 +300,7 @@ export function getData(request: GetDataRequest): GetDataResponse {
     startDate === undefined ||
     endDate === undefined
   ) {
+    console.error("getData: parameters not set");
     cc.newUserError()
       .throwException();
 
@@ -285,8 +310,18 @@ export function getData(request: GetDataRequest): GetDataResponse {
   const requestedFieldIds = request.fields.map(field => field.name);
   const requestedFields = getFields(workspace).forIds(requestedFieldIds);
 
-  const entries = fetchEntries(workspace, startDate, endDate);
-  const rows = responseToRows(entries);
+  let entries: Entry[];
+  try {
+    entries = fetchEntries(workspace, startDate, endDate);
+  } catch (e) {
+    console.error(`getData: ${e.message}`);
+    cc.newUserError()
+      .throwException();
+
+    throw new Error();
+  }
+
+  const rows = responseToRows(requestedFieldIds, entries);
 
   return {
     schema: requestedFields.build(),

@@ -147,10 +147,10 @@ export interface Entry {
   start: string,
   end: string,
   updated: string,
-  dur: string,
+  dur: number,
   user: string,
   use_stop: boolean,
-  client?: string,
+  client: string | null,
   project: string,
   project_color: string,
   project_hex_color: string,
@@ -159,6 +159,7 @@ export interface Entry {
   is_billable: boolean,
   cur: string,
   tags: string[],
+  [key: string]: any,
 }
 
 export interface DetailsResponse {
