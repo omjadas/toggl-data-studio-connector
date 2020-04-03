@@ -23,7 +23,7 @@ export function isAdminUser(): boolean {
   return false;
 }
 
-function validateCredentials(key: string): boolean {
+function validateCredentials(_key: string): boolean {
   return true;
 }
 
