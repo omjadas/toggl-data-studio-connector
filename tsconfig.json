@@ -8,7 +8,7 @@
         "outDir": "dist",
         "sourceMap": true,
         "strict": true,
-        "target": "ES2019",
+        "target": "ES3",
         "types": [
             "google-apps-script"
         ],

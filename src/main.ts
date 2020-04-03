@@ -18,9 +18,11 @@ function fetchWorkspaces(): Workspace[] {
   const workspaces: Workspace[] = JSON.parse(UrlFetchApp.fetch(
     "https://www.toggl.com/api/v8/workspaces",
     {
+      method: "get",
       muteHttpExceptions: true,
       headers: {
-        "Authorization": `Basic ${Utilities.base64Encode(key)}`,
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
       },
     }
   ).getContentText());
