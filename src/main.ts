@@ -3,7 +3,6 @@ import { AUTH_PROPERTY_PATH } from "./auth";
 
 const cc = DataStudioApp.createCommunityConnector();
 
-const scriptProperties = PropertiesService.getScriptProperties();
 const userProperties = PropertiesService.getUserProperties();
 
 function fetchWorkspaces(): Workspace[] {
