@@ -1,0 +1,18 @@
+{
+  "runtimeVersion": "V8",
+  "dataStudio": {
+    "name": "Toggl",
+    "logoUrl": "https://toggl.com/favicon.ico",
+    "company": "Toggl",
+    "companyUrl": "https://www.toggl.com",
+    "addonUrl": "https://www.toggl.com",
+    "supportUrl": "https://support.toggl.com/en/",
+    "templates": {
+      "default": ""
+    },
+    "description": "Retrieve time entries from Toggl.",
+    "sources": [
+      "Toggl"
+    ]
+  }
+}

@@ -208,3 +208,4 @@ $RECYCLE.BIN/
 *.lnk
 
 dist/
+.clasp.json
