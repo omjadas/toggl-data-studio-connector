@@ -182,7 +182,7 @@ function getFields(workspace: string): GoogleAppsScript.Data_Studio.Fields {
   tags.forEach(tag => {
     fields.newDimension()
       .setId(`tag:${tag.name}`)
-      .setName(tag.name)
+      .setName(`Tag: ${tag.name}`)
       .setType(types.BOOLEAN);
   });
 
@@ -203,8 +203,12 @@ function getFields(workspace: string): GoogleAppsScript.Data_Studio.Fields {
 
 // https://developers.google.com/datastudio/connector/reference#getschema
 export function getSchema(request: GetSchemaRequest): GetSchemaResponse {
-  const fields = getFields(request.configParams.workspace_id).build();
-  return { schema: fields };
+  const fields = getFields(request.configParams.workspace_id);
+
+  return cc
+    .newGetSchemaResponse()
+    .setFields(fields)
+    .build();
 }
 
 // https://developers.google.com/datastudio/connector/reference#getdata
@@ -221,10 +225,12 @@ export function getData(request: GetDataRequest): GetDataResponse {
   const requestedFieldIds = request.fields.map(field => field.name);
   const requestedFields = getFields(workspace).forIds(requestedFieldIds);
 
-  const rows: GetDataRows = [];
+  const entries = fetchEntries(workspace);
+  const rows = [[]];
 
-  return {
-    schema: requestedFields.build(),
-    rows: rows,
-  };
+  return cc
+    .newGetDataResponse()
+    .setFields(requestedFields)
+    .addAllRows(rows)
+    .build();
 }
