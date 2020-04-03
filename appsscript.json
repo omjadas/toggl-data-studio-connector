@@ -3,13 +3,10 @@
   "dataStudio": {
     "name": "Toggl",
     "logoUrl": "https://toggl.com/favicon.ico",
-    "company": "Toggl",
-    "companyUrl": "https://www.toggl.com",
-    "addonUrl": "https://www.toggl.com",
-    "supportUrl": "https://support.toggl.com/en/",
-    "templates": {
-      "default": ""
-    },
+    "company": "Omja Das",
+    "companyUrl": "https://github.com/omjadas",
+    "addonUrl": "https://github.com/omjadas/toggl-data-studio-connector",
+    "supportUrl": "https://github.com/omjadas/toggl-data-studio-connector/issues",
     "description": "Retrieve time entries from Toggl.",
     "sources": [
       "Toggl"
