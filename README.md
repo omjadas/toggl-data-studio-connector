@@ -1,1 +1,1 @@
-# toggl-datastudio-connector
+# toggl-data-studio-connector

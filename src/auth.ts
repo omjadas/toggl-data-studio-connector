@@ -25,8 +25,23 @@ export function isAdminUser(): boolean {
   return false;
 }
 
-function validateCredentials(_key: string): boolean {
-  return true;
+function validateCredentials(key: string): boolean {
+  const res = UrlFetchApp.fetch(
+    "https://www.toggl.com/api/v8/workspaces",
+    {
+      method: "get",
+      muteHttpExceptions: true,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
+      },
+    }
+  );
+
+  if (res.getResponseCode() === 200) {
+    return true;
+  }
+  return false;
 }
 
 export function getAuthType(): GoogleAppsScript.Data_Studio.GetAuthTypeResponse {
