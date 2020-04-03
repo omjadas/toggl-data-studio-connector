@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "esnext"
+        ],
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "strict": true,
+        "target": "ES3",
+        "types": [
+            "google-apps-script"
+        ],
+        "module": "CommonJS"
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
