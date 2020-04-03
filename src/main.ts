@@ -35,6 +35,26 @@ export function getConfig(
 ): GoogleAppsScript.Data_Studio.Config {
   const config = cc.getConfig();
 
+  config.newInfo()
+    .setId("workspace_id_info")
+    .setText("Select a workspace to fetch your entries.");
+
+  const selectSingle = config.newSelectSingle()
+    .setId("workspace_id")
+    .setName("Workspace")
+    .setAllowOverride(true)
+    .setHelpText("Choose a workspace you wish to fetch time entries for.");
+
+  const workspaces = fetchWorkspaces();
+
+  workspaces.forEach(workspace => {
+    const option = config.newOptionBuilder()
+      .setLabel(workspace.name)
+      .setValue(workspace.id.toString());
+
+    selectSingle.addOption(option);
+  });
+
   return config.build();
 }
 
