@@ -131,6 +131,13 @@ export interface Workspace {
   ical_enabled: boolean,
 }
 
+export interface Tag {
+  id: number,
+  wid: number,
+  name: string,
+  at: string,
+}
+
 export interface Report {
   id: number,
   pid: number,
