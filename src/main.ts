@@ -1,6 +1,10 @@
-import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse } from "./global";
+import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Workspace } from "./global";
 
 const cc = DataStudioApp.createCommunityConnector();
+
+function fetchWorkspaces(): Workspace[] {
+  return [];
+}
 
 // https://developers.google.com/datastudio/connector/reference#getconfig
 export function getConfig(

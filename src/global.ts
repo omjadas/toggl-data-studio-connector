@@ -109,3 +109,47 @@ export type SetCredentialsRequest =
 export interface SetCredentialsResponse {
   errorCode: "NONE" | "INVALID_CREDENTIALS",
 }
+
+export interface Workspace {
+  id: number,
+  name: string,
+  profile: string,
+  premium: boolean,
+  admin: boolean,
+  default_hourly_rate: number,
+  default_currency: string,
+  only_admins_may_create_projects: boolean,
+  only_admins_see_billable_rate: boolean,
+  only_admins_see_team_dashboard: boolean,
+  projects_billable_by_default: boolean,
+  rounding: number,
+  rounding_minutes: number,
+  api_token: string,
+  at: string,
+  logo_url: string,
+  ical_url: string,
+  ical_enabled: boolean,
+}
+
+export interface Report {
+  id: number,
+  pid: number,
+  tid: number,
+  uid: number,
+  description: string,
+  start: string,
+  end: string,
+  updated: string,
+  dur: string,
+  user: string,
+  use_stop: boolean,
+  client?: string,
+  project: string,
+  project_color: string,
+  project_hex_color: string,
+  task: string,
+  billable: number,
+  is_billable: boolean,
+  cur: string,
+  tags: string[],
+}
