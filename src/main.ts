@@ -1,5 +1,5 @@
-import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Workspace, Tag, Report as Entry } from "./global";
 import { AUTH_PROPERTY_PATH } from "./auth";
+import { Entry, GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Tag, Workspace, DetailsResponse } from "./global";
 
 const cc = DataStudioApp.createCommunityConnector();
 
@@ -57,6 +57,26 @@ function fetchTags(workspace: string): Tag[] {
   return tags;
 }
 
+function fetchPage(
+  key: string,
+  workspace: string,
+  start: string,
+  end: string,
+  page: number = 1
+): DetailsResponse {
+  return JSON.parse(UrlFetchApp.fetch(
+    `https://toggl.com/reports/api/v2/details?user_agent=${USER_AGENT}&workspace_id=${workspace}&since=${start}&until=${end}&page=${page}`,
+    {
+      method: "get",
+      muteHttpExceptions: true,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
+      },
+    }
+  ).getContentText());
+}
+
 function fetchEntries(workspace: string, start: string, end: string): Entry[] {
   const key = userProperties.getProperty(AUTH_PROPERTY_PATH);
   const startDate = new Date(start);
@@ -69,17 +89,22 @@ function fetchEntries(workspace: string, start: string, end: string): Entry[] {
     throw new Error();
   }
 
-  const entries: Entry[] = JSON.parse(UrlFetchApp.fetch(
-    `https://toggl.com/reports/api/v2/details?user_agent=${USER_AGENT}&workspace_id=${workspace}&since=${startDate.toISOString().slice(0, 10)}&until=${endDate.toISOString().slice(0, 10)}`,
-    {
-      method: "get",
-      muteHttpExceptions: true,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
-      },
-    }
-  ).getContentText());
+  const entries: Entry[] = [];
+
+  let page = 1;
+  let response: DetailsResponse;
+
+  do {
+    response = fetchPage(
+      key,
+      workspace,
+      startDate.toISOString().slice(0, 10),
+      endDate.toISOString().slice(0, 10),
+      page
+    );
+    entries.push(...response.data);
+    page++;
+  } while (response.data.length === 50);
 
   return entries;
 }
@@ -246,7 +271,11 @@ export function getData(request: GetDataRequest): GetDataResponse {
   const startDate = request.dateRange?.startDate;
   const endDate = request.dateRange?.endDate;
 
-  if (workspace === undefined || startDate === undefined || endDate === undefined) {
+  if (
+    workspace === undefined ||
+    startDate === undefined ||
+    endDate === undefined
+  ) {
     cc.newUserError()
       .throwException();
 

@@ -138,7 +138,7 @@ export interface Tag {
   at: string,
 }
 
-export interface Report {
+export interface Entry {
   id: number,
   pid: number,
   tid: number,
@@ -159,4 +159,16 @@ export interface Report {
   is_billable: boolean,
   cur: string,
   tags: string[],
+}
+
+export interface DetailsResponse {
+  total_grand: number,
+  total_billable: number,
+  total_currencies: {
+    currency: string,
+    amount: number,
+  }[],
+  total_count: number,
+  per_page: number,
+  data: Entry[],
 }
