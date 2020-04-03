@@ -1,12 +1,58 @@
-import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse } from "./global";
+import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse, Workspace } from "./global";
+import { AUTH_PROPERTY_PATH } from "./auth";
 
 const cc = DataStudioApp.createCommunityConnector();
+
+const userProperties = PropertiesService.getUserProperties();
+
+function fetchWorkspaces(): Workspace[] {
+  const key = userProperties.getProperty(AUTH_PROPERTY_PATH);
+
+  if (key === null) {
+    cc.newUserError()
+      .throwException();
+
+    throw new Error();
+  }
+
+  const workspaces: Workspace[] = JSON.parse(UrlFetchApp.fetch(
+    "https://www.toggl.com/api/v8/workspaces",
+    {
+      muteHttpExceptions: true,
+      headers: {
+        "Authorization": `Basic ${Utilities.base64Encode(key)}`,
+      },
+    }
+  ).getContentText());
+
+  return workspaces;
+}
 
 // https://developers.google.com/datastudio/connector/reference#getconfig
 export function getConfig(
   _request: GetConfigRequest
 ): GoogleAppsScript.Data_Studio.Config {
   const config = cc.getConfig();
+
+  config.newInfo()
+    .setId("workspace_id_info")
+    .setText("Select a workspace to fetch your entries.");
+
+  const selectSingle = config.newSelectSingle()
+    .setId("workspace_id")
+    .setName("Workspace")
+    .setAllowOverride(true)
+    .setHelpText("Choose a workspace you wish to fetch time entries for.");
+
+  const workspaces = fetchWorkspaces();
+
+  workspaces.forEach(workspace => {
+    const option = config.newOptionBuilder()
+      .setLabel(workspace.name)
+      .setValue(workspace.id.toString());
+
+    selectSingle.addOption(option);
+  });
 
   return config.build();
 }

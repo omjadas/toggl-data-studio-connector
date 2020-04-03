@@ -8,6 +8,8 @@ const AUTH_PROPERTY_PATH = "TOGGL_KEY";
 const scriptProperties = PropertiesService.getScriptProperties();
 const userProperties = PropertiesService.getUserProperties();
 
+export { AUTH_PROPERTY_PATH };
+
 // https://developers.google.com/datastudio/connector/reference#isadminuser
 export function isAdminUser(): boolean {
   const email = Session.getEffectiveUser().getEmail();
