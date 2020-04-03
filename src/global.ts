@@ -131,7 +131,14 @@ export interface Workspace {
   ical_enabled: boolean,
 }
 
-export interface Report {
+export interface Tag {
+  id: number,
+  wid: number,
+  name: string,
+  at: string,
+}
+
+export interface Entry {
   id: number,
   pid: number,
   tid: number,
@@ -140,10 +147,10 @@ export interface Report {
   start: string,
   end: string,
   updated: string,
-  dur: string,
+  dur: number,
   user: string,
   use_stop: boolean,
-  client?: string,
+  client: string | null,
   project: string,
   project_color: string,
   project_hex_color: string,
@@ -152,4 +159,17 @@ export interface Report {
   is_billable: boolean,
   cur: string,
   tags: string[],
+  [key: string]: any,
+}
+
+export interface DetailsResponse {
+  total_grand: number,
+  total_billable: number,
+  total_currencies: {
+    currency: string,
+    amount: number,
+  }[],
+  total_count: number,
+  per_page: number,
+  data: Entry[],
 }

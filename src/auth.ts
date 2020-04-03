@@ -44,7 +44,8 @@ function validateCredentials(key: string): boolean {
   return false;
 }
 
-export function getAuthType(): GoogleAppsScript.Data_Studio.GetAuthTypeResponse {
+export function getAuthType(
+): GoogleAppsScript.Data_Studio.GetAuthTypeResponse {
   return cc
     .newAuthTypeResponse()
     .setAuthType(cc.AuthType.KEY)
