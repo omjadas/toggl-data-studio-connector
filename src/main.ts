@@ -1,4 +1,4 @@
-import { GetConfigRequest, GetSchemaRequest, GetSchemaResponse, GetDataRequest } from "./global";
+import { GetConfigRequest, GetDataRequest, GetDataResponse, GetDataRows, GetSchemaRequest, GetSchemaResponse } from "./global";
 
 const cc = DataStudioApp.createCommunityConnector();
 
@@ -24,7 +24,14 @@ export function getSchema(_request: GetSchemaRequest): GetSchemaResponse {
 }
 
 // https://developers.google.com/datastudio/connector/reference#getdata
-export function getData(
-  request: GetDataRequest
-): GoogleAppsScript.Data_Studio.GetDataResponse {
+export function getData(request: GetDataRequest): GetDataResponse {
+  const requestedFieldIds = request.fields.map(field => field.name);
+  const requestedFields = getFields().forIds(requestedFieldIds);
+
+  const rows: GetDataRows = [];
+
+  return {
+    schema: requestedFields.build(),
+    rows: rows,
+  };
 }
