@@ -1,0 +1,10 @@
+plugins: 
+  eslint:
+    enabled: true
+    channel: "eslint-6"
+    config:
+      extensions:
+      - .js
+      - .jsx
+      - .ts
+      - .tsx
