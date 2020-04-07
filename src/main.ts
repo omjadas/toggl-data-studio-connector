@@ -95,6 +95,7 @@ function fetchEntries(workspace: string, start: string, end: string): Entry[] {
   let response: DetailsResponse;
 
   do {
+    Utilities.sleep(1);
     response = fetchPage(
       key,
       workspace,
