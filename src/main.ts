@@ -63,18 +63,22 @@ function fetchPage(
   start: string,
   end: string,
   page: number = 1
-): DetailsResponse {
-  return JSON.parse(UrlFetchApp.fetch(
+): GoogleAppsScript.URL_Fetch.HTTPResponse {
+  return UrlFetchApp.fetch(
     `https://toggl.com/reports/api/v2/details?user_agent=${USER_AGENT}&workspace_id=${workspace}&since=${start}&until=${end}&page=${page}`,
     {
       method: "get",
-      muteHttpExceptions: false,
+      muteHttpExceptions: true,
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
       },
     }
-  ).getContentText());
+  );
+}
+
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function fetchEntries(workspace: string, start: string, end: string): Entry[] {
@@ -92,7 +96,8 @@ function fetchEntries(workspace: string, start: string, end: string): Entry[] {
   const entries: Entry[] = [];
 
   let page = 1;
-  let response: DetailsResponse;
+  let response: GoogleAppsScript.URL_Fetch.HTTPResponse;
+  let body: DetailsResponse;
 
   do {
     response = fetchPage(
@@ -102,9 +107,30 @@ function fetchEntries(workspace: string, start: string, end: string): Entry[] {
       endDate.toISOString().slice(0, 10),
       page
     );
-    entries.push(...response.data);
+
+    let min = 1;
+    let max = 3;
+
+    while (response.getResponseCode() === 429) {
+      console.warn("Too Many Requests");
+      Utilities.sleep(randomInt(min, max));
+
+      response = fetchPage(
+        key,
+        workspace,
+        startDate.toISOString().slice(0, 10),
+        endDate.toISOString().slice(0, 10),
+        page
+      );
+
+      min *= 2;
+      max *= 2;
+    }
+
+    body = JSON.parse(response.getContentText());
+    entries.push(...body.data);
     page++;
-  } while (response.data.length === 50);
+  } while (body.data.length === 50);
 
   return entries;
 }
