@@ -27,13 +27,23 @@
       }
     ],
     "camelcase": "off",
-    "@typescript-eslint/camelcase": [
-      "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
       {
-        "properties": "always"
+        "selector": "variableLike",
+        "format": [
+          "camelCase",
+          "UPPER_CASE"
+        ],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "typeLike",
+        "format": [
+          "PascalCase"
+        ]
       }
     ],
-    "@typescript-eslint/class-name-casing": "error",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
