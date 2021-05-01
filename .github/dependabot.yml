@@ -9,11 +9,3 @@ updates:
   open-pull-requests-limit: 99
   reviewers:
   - omjadas
-  ignore:
-  - dependency-name: "@typescript-eslint/eslint-plugin"
-    versions:
-    - 4.16.0
-    - 4.16.1
-  - dependency-name: "@typescript-eslint/parser"
-    versions:
-    - 4.16.1
