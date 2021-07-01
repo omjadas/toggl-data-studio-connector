@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/omjadas/toggl-datastudio-connector#readme",
   "devDependencies": {
-    "@google/clasp": "^2.3.2",
+    "@google/clasp": "^2.4.0",
     "@types/google-apps-script": "^1.0.34",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.1",
