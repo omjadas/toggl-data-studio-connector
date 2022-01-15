@@ -27,7 +27,7 @@ function fetchWorkspaces(): Workspace[] {
         "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
       },
     }
-  ).getContentText());
+  ).getContentText()) as Workspace[];
 
   return workspaces;
 }
@@ -52,7 +52,7 @@ function fetchTags(workspace: string): Tag[] {
         "Authorization": `Basic ${Utilities.base64Encode(`${key}:api_token`)}`,
       },
     }
-  ).getContentText());
+  ).getContentText()) as Tag[];
 
   return tags;
 }
@@ -127,7 +127,7 @@ function fetchEntries(workspace: string, start: string, end: string): Entry[] {
       max *= 2;
     }
 
-    body = JSON.parse(response.getContentText());
+    body = JSON.parse(response.getContentText()) as DetailsResponse;
     entries.push(...body.data);
     page++;
   } while (body.data.length === 50);
@@ -301,7 +301,7 @@ export function getSchema(request: GetSchemaRequest): GetSchemaResponse {
   return cc
     .newGetSchemaResponse()
     .setFields(fields)
-    .build();
+    .build() as GetSchemaResponse;
 }
 
 function isoStringToSimple(time: string): string {
@@ -313,18 +313,18 @@ function responseToRows(requestedFieldIds: string[], entries: Entry[]): GetDataR
     const row: GetDataRowValue[] = [];
 
     for (const field of requestedFieldIds) {
-      let val: any;
+      let val: GetDataRowValue;
 
       if (field.slice(0, 4) === "tag_") {
         val = entry.tags.includes(field.slice(4));
       } else if (field === "dur") {
         val = (entry[field] / 1000).toString();
       } else {
-        val = entry[field];
+        val = entry[field] as GetDataRowValue;
       }
 
       if (field === "start" || field === "end" || field === "updated") {
-        val = isoStringToSimple(val);
+        val = isoStringToSimple(val as string);
       }
 
       row.push(val);
@@ -357,8 +357,8 @@ export function getData(request: GetDataRequest): GetDataResponse {
   let entries: Entry[];
   try {
     entries = fetchEntries(workspace, startDate, endDate);
-  } catch (e) {
-    console.error(`getData: ${e.message}`);
+  } catch (e: unknown) {
+    console.error(`getData: ${(e as Error).message}`);
     cc.newUserError()
       .throwException();
 
@@ -368,7 +368,7 @@ export function getData(request: GetDataRequest): GetDataResponse {
   const rows = responseToRows(requestedFieldIds, entries);
 
   return {
-    schema: requestedFields.build(),
+    schema: requestedFields.build() as Record<string, any>[],
     rows: rows,
   };
 }

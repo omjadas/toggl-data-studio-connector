@@ -12,11 +12,13 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "rules": {
     "no-var": "off",
-    "comma-dangle": [
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": [
       "error",
       "always-multiline"
     ],
@@ -27,20 +29,41 @@
       }
     ],
     "camelcase": "off",
+    "@typescript-eslint/camelcase": [
+      "off",
+      {
+        "properties": "always"
+      }
+    ],
     "@typescript-eslint/naming-convention": [
       "error",
       {
         "selector": "variableLike",
         "format": [
-          "camelCase",
-          "UPPER_CASE"
+          "camelCase"
         ],
         "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "variable",
+        "modifiers": [
+          "const"
+        ],
+        "format": [
+          "camelCase",
+          "UPPER_CASE"
+        ]
       },
       {
         "selector": "typeLike",
         "format": [
           "PascalCase"
+        ]
+      },
+      {
+        "selector": "enumMember",
+        "format": [
+          "UPPER_CASE"
         ]
       }
     ],
@@ -84,6 +107,12 @@
     ],
     "@typescript-eslint/triple-slash-reference": [
       "off"
+    ],
+    "@typescript-eslint/restrict-template-expressions": [
+      "off"
+    ],
+    "@typescript-eslint/no-implicit-any-catch": [
+      "error"
     ],
     "semi": "off",
     "@typescript-eslint/semi": "error",
