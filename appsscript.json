@@ -2,7 +2,7 @@
   "runtimeVersion": "V8",
   "dataStudio": {
     "name": "Toggl",
-    "logoUrl": "https://toggl.com/favicon.ico",
+    "logoUrl": "https://track.toggl.com/favicon.ico",
     "company": "Omja Das",
     "companyUrl": "https://github.com/omjadas",
     "addonUrl": "https://github.com/omjadas/toggl-data-studio-connector",

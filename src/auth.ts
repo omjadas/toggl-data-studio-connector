@@ -27,7 +27,7 @@ export function isAdminUser(): boolean {
 
 function validateCredentials(key: string): boolean {
   const res = UrlFetchApp.fetch(
-    "https://www.toggl.com/api/v8/workspaces",
+    "https://api.track.toggl.com/api/v8/workspaces",
     {
       method: "get",
       muteHttpExceptions: true,

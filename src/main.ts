@@ -18,7 +18,7 @@ function fetchWorkspaces(): Workspace[] {
   }
 
   const workspaces: Workspace[] = JSON.parse(UrlFetchApp.fetch(
-    "https://www.toggl.com/api/v8/workspaces",
+    "https://api.track.toggl.com/api/v8/workspaces",
     {
       method: "get",
       muteHttpExceptions: false,
@@ -43,7 +43,7 @@ function fetchTags(workspace: string): Tag[] {
   }
 
   const tags: Tag[] = JSON.parse(UrlFetchApp.fetch(
-    `https://www.toggl.com/api/v8/workspaces/${workspace}/tags`,
+    `https://api.track.toggl.com/api/v8/workspaces/${workspace}/tags`,
     {
       method: "get",
       muteHttpExceptions: false,
@@ -65,7 +65,7 @@ function fetchPage(
   page: number = 1
 ): GoogleAppsScript.URL_Fetch.HTTPResponse {
   return UrlFetchApp.fetch(
-    `https://toggl.com/reports/api/v2/details?user_agent=${USER_AGENT}&workspace_id=${workspace}&since=${start}&until=${end}&page=${page}`,
+    `https://api.track.toggl.com/reports/api/v2/details?user_agent=${USER_AGENT}&workspace_id=${workspace}&since=${start}&until=${end}&page=${page}`,
     {
       method: "get",
       muteHttpExceptions: true,
