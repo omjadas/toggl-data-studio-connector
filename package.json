@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "build": "tsc",
     "lint": "eslint --max-warnings 0 \"src/**/*.ts\""
   },
   "repository": {
