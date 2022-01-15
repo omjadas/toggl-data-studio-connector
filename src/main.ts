@@ -206,7 +206,7 @@ function getFields(workspace: string): GoogleAppsScript.Data_Studio.Fields {
     .setId("start_date")
     .setName("Start Date")
     .setType(types.YEAR_MONTH_DAY)
-    .setFormula("TODATE($start,'%Y%m%d%H%M%S','%Y%m%d')");
+    .setFormula("DATE($start)");
 
   fields.newDimension()
     .setId("end")
@@ -217,7 +217,7 @@ function getFields(workspace: string): GoogleAppsScript.Data_Studio.Fields {
     .setId("end_date")
     .setName("End Date")
     .setType(types.YEAR_MONTH_DAY)
-    .setFormula("TODATE($end,'%Y%m%d%H%M%S','%Y%m%d')");
+    .setFormula("DATE($end)");
 
   fields.newDimension()
     .setId("updated")
@@ -228,7 +228,7 @@ function getFields(workspace: string): GoogleAppsScript.Data_Studio.Fields {
     .setId("updated_date")
     .setName("Updated Date")
     .setType(types.YEAR_MONTH_DAY)
-    .setFormula("TODATE($updated,'%Y%m%d%H%M%S','%Y%m%d')");
+    .setFormula("DATE($updated)");
 
   fields.newDimension()
     .setId("user")
