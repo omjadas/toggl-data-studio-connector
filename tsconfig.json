@@ -1,14 +1,14 @@
 {
     "compilerOptions": {
         "lib": [
-            "esnext"
+            "ES2019"
         ],
         "downlevelIteration": true,
         "experimentalDecorators": true,
         "outDir": "dist",
         "sourceMap": true,
         "strict": true,
-        "target": "ES3",
+        "target": "ES2019",
         "types": [
             "google-apps-script"
         ],
