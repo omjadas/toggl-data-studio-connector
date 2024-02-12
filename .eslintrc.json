@@ -111,9 +111,6 @@
     "@typescript-eslint/restrict-template-expressions": [
       "off"
     ],
-    "@typescript-eslint/no-implicit-any-catch": [
-      "error"
-    ],
     "semi": "off",
     "@typescript-eslint/semi": "error",
     "no-multiple-empty-lines": [
